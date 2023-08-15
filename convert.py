@@ -14,6 +14,6 @@ def convert_video_to_audio(video_path, audio_path):
     print(f"Video converted to audio! Saved at {audio_path}")
 
 # Example usage:
-video_path = "./transcribetest.mp4"
+video_path = "./startupidea.mov"
 audio_path = "./output_audio.mp3"
 convert_video_to_audio(video_path, audio_path)
