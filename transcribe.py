@@ -1,7 +1,7 @@
 import openai
 import json
 import re
-openai.api_key = "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"
+openai.api_key = "API KEY"
 
 
 with open("./temp/output_audio.mp3", "rb") as audio_file:
