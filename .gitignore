@@ -1,3 +1,4 @@
 .DS_Store
-transcribetest.mp4
-startupidea.mov
+input/*
+output/*
+temp/*
