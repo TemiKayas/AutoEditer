@@ -12,3 +12,8 @@ pip install ffmpeg
 brew install ffmpeg
 pip install openai
 ```
+
+
+## API KEY 
+
+Create a file called "API_KEYS.env" and paste just your API key into it. This will allow the methods to read from the file and get your API key. 
