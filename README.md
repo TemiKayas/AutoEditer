@@ -32,4 +32,7 @@ To run the server:
 
 ```bash
 python manage.py runserver
+
+
 ```
+then add /backend to the end of the URL
