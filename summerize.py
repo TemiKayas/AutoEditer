@@ -1,12 +1,15 @@
 import openai
 import json
 import re
-openai.api_key = "API KEY"
+
+API_KEY=open("API_KEYS.env", "r")
+openai.api_key = API_KEY.read()
 
 # Key points method
 def extract_key_points(json_filename, api_key):
     # Load the JSON data
-    with open(json_filename, 'r') as file:
+    #Tryed changing the file name from json_file name to current. If pathing isnt correct just reset it
+    with open("./output/transcript.json", 'r') as file:
         transcription_entries = json.load(file)
 
     # Concatenate the text from the transcription entries

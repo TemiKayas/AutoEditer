@@ -2,3 +2,5 @@
 input/*
 output/*
 temp/*
+*.env
+testing.py

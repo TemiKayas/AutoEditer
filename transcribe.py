@@ -1,8 +1,9 @@
 import openai
 import json
 import re
-openai.api_key = "API KEY"
-
+#openai.api_key = "API KEY"
+API_KEY=open("API_KEYS.env", "r")
+openai.api_key = API_KEY.read()  # Replace with your API key
 
 with open("./temp/output_audio.mp3", "rb") as audio_file:
     transcript = openai.Audio.transcribe(
