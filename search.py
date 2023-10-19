@@ -1,52 +1,53 @@
-import json
 import openai
+import json
 
-def search_transcript_with_gpt(query, json_filename):
-    """
-    Use ChatGPT to search for a specific query in the transcript and return the IDs of relevant quotes.
+api_key=open("API_KEYS.env", "r")
+openai.api_key = api_key.read()  
+
+def call_chatgpt_v4(api_key, user_message, transcript_chunk):
     
-    Args:
-    - query (str): The user's search query.
-    - json_filename (str): The name of the JSON file containing the transcript.
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Rate the relevance of the chunk to the query between 0 (not relevant) and 1 (highly relevant)."},
+            {"role": "user", "content": f"Query: {user_message}\nChunk: {transcript_chunk}"}
+        ]
+    )
     
-    Returns:
-    - list: A list of IDs corresponding to the relevant quotes as determined by ChatGPT.
-    """
+    response = completion.choices[0].message['content']
+    try:
+        relevance_score = float(response)
+    except ValueError:
+        relevance_score = 0  # Higher the relevance score the more words must match
 
-    matching_ids = []
+    return relevance_score
 
-    # Load the JSON data
-    #Changed json_filename to path for transcript.json
-    with open("./output/transcript.json", 'r') as file:
-        transcript_entries = json.load(file)
+def search_transcript_for_quote(api_key, query, keyword):
+    with open("./output/transcript.json", "r") as file:
+        transcripts = json.load(file)
 
-    # Initialize OpenAI API
-    API_KEY=open("API_KEYS.env", "r")
-    openai.api_key = API_KEY.read()  # Replace with your API key
+    # Filter transcripts based on the keyword
+    potential_matches = [entry for entry in transcripts if keyword.lower() in entry["text"].lower()]
+
+    if not potential_matches:
+        return None
+
+    highest_relevance_score = 0
+    most_relevant_entry = None
+
+    # Use ChatGPT to evaluate relevance for each potential match
+    for entry in potential_matches:
+        relevance_score = call_chatgpt_v4(api_key, query, entry["text"])
+
+        if relevance_score > highest_relevance_score:
+            highest_relevance_score = relevance_score
+            most_relevant_entry = entry
+
+    return most_relevant_entry["id"]
 
 
-    #Try sending entire transcript and having it search through the entire transcript
-    #Cut start and end time stamps from the transcript before sending it
-    for entry in transcript_entries:
-        prompt = f"Given the query '{query}', is the following quote relevant? \"{entry['text']}\""
-        ##Use Davinci instead of GPT 4
-        response = openai.Completion.create(
-            model="gpt-4",  # This might change depending on available models in the future
-            prompt=prompt,
-            max_tokens=50  # Limiting the response length for brevity
-        )
-        
-        if "yes" in response.choices[0].text.lower():
-            matching_ids.append(entry['id'])
-
-    return matching_ids
-
-# Test the method
-json_filename = "transcription.json"
-query = input("Please enter your search query: ")
-matching_ids = search_transcript_with_gpt(query, json_filename)
-
-if matching_ids:
-    print(f"Found relevant quotes with the following IDs: {matching_ids}")
+quote_id = search_transcript_for_quote(api_key, "The text discusses the idea of developing a software that can automatically edit videos by condensing them and summarizing key points", "edit")
+if quote_id:
+    print(f"Relevant quote found with ID: {quote_id}")
 else:
-    print("No relevant matches found.")
+    print("No relevant quote found in the transcript.")
