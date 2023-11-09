@@ -1,8 +1,6 @@
-from custompromptobject import CustomPromptObject
-
 class CustomPromptObjectContainer:
-
-    def __init__(self):
+    def __init__(self, docName):
+        self.docName = docName
         self.customPromptList = []
 
     def addCustomPrompt(self, CustomPromptObject):
