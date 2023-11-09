@@ -3,7 +3,7 @@ class CustomPromptObject:
         self.prompttext = prompttext
         self.x = x
         self.y = y        
-        self.promptresponse = "example"
+        self.promptresponse = "example, this text contains the response from GPT. A function will have to be implemented to assign this"
 
 
     
